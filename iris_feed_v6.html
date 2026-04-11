@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IRIS Intelligence Feed</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Gradient palette — biru putih ke pink coral */
+  --bg-grad: linear-gradient(135deg, #dce8ff 0%, #eee0fd 35%, #fce8e8 70%, #ffd6cc 100%);
+  --accent: #7B6CF0;
+  --accent2: #C06BBA;
+  --coral: #E8705A;
+  --coral2: #D85A30;
+  --coral-light: #fdecea;
+  --blue: #3A7FE8;
+  --blue-light: #dce8ff;
+  --purple-light: #eee0fd;
+
+  /* Surfaces — glass effect */
+  --surface: rgba(255,255,255,0.82);
+  --surface2: rgba(255,255,255,0.55);
+  --surface3: rgba(255,255,255,0.35);
+
+  /* Text */
+  --ink: #1A1730;
+  --ink2: #2E2B4A;
+  --ink3: #6B648A;
+  --ink4: #A8A0C0;
+
+  /* Borders */
+  --border: rgba(123,108,240,0.15);
+  --border2: rgba(123,108,240,0.08);
+
+  /* Status */
+  --green: #1A6B3A;
+  --green-light: #e4f5ec;
+  --gold: #9A6800;
+  --gold-light: #fdf0d0;
+  --red: #C0392B;
+  --red-light: #fdecea;
+
+  /* Gradient accents */
+  --grad-main: linear-gradient(135deg, #7B6CF0 0%, #C06BBA 50%, #E8705A 100%);
+  --grad-soft: linear-gradient(135deg, #dce8ff 0%, #eee0fd 50%, #fdecea 100%);
+  --grad-card: linear-gradient(135deg, rgba(220,232,255,0.6) 0%, rgba(253,236,234,0.6) 100%);
+  --grad-topbar: linear-gradient(90deg, #1A1730 0%, #2D1F4A 50%, #3D1F35 100%);
+  --grad-ticker: linear-gradient(90deg, #6B5CE0 0%, #B060B0 50%, #D85A30 100%);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--bg-grad);
+  background-attachment: fixed;
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* TOPBAR */
+.topbar {
+  background: var(--grad-topbar);
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: rgba(245,240,255,0.95);
+  letter-spacing: 0.12em;
+}
+
+.topbar-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(245,240,232,0.2);
+}
+
+.topbar-sub {
+  font-size: 10px;
+  color: rgba(245,240,232,0.5);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.iris-report-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(245,240,255,0.7);
+  line-height: 1.35;
+  text-align: right;
+}
+
+.iris-report-badge strong {
+  color: rgba(245,240,255,0.95);
+  font-weight: 600;
+}
+
+.iris-badge-divider {
+  width: 1px;
+  height: 24px;
+  background: rgba(245,240,255,0.15);
+  flex-shrink: 0;
+}
+
+.iris-dot-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.iris-ai-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7B6CF0, #E8705A);
+  animation: pulse 2.5s infinite;
+}
+
+.iris-ai-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  color: rgba(245,240,255,0.45);
+  letter-spacing: 0.08em;
+}
+
+.topbar-clock {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: rgba(245,240,255,0.45);
+  flex-shrink: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* TICKER */
+.ticker-wrap {
+  background: var(--grad-ticker);
+  overflow: hidden;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.ticker-label {
+  background: rgba(0,0,0,0.25);
+  padding: 0 14px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.ticker-track {
+  display: flex;
+  animation: ticker 40s linear infinite;
+  white-space: nowrap;
+}
+
+.ticker-item {
+  padding: 0 24px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: rgba(245,240,255,0.95);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ticker-name { opacity: 0.7; }
+.ticker-val { font-weight: 500; }
+.ticker-chg { font-size: 10px; }
+.up { color: #81C784; }
+.dn { color: #EF9A9A; }
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* LAYOUT */
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.feed-layout {
+  gap: 28px;
+}
+
+/* MASTHEAD */
+.masthead {
+  border-bottom: 3px solid var(--accent);
+  padding: 24px 0 16px;
+  margin-bottom: 24px;
+}
+
+.masthead-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.masthead-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 56px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.masthead-title span {
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.masthead-date {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  color: var(--ink3);
+  text-align: right;
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+}
+
+.masthead-tagline {
+  font-size: 10px;
+  color: var(--ink4);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+/* NAV TABS */
+.nav-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  background: var(--surface2);
+  backdrop-filter: blur(12px);
+  border-radius: 8px 8px 0 0;
+  padding: 0 8px;
+  height: 42px;
+  align-items: center;
+  flex-shrink: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232,112,90,0.4) transparent;
+}
+
+.nav-tabs::-webkit-scrollbar {
+  height: 2px;
+}
+
+.nav-tabs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nav-tabs::-webkit-scrollbar-thumb {
+  background: rgba(232,112,90,0.45);
+  border-radius: 1px;
+}
+
+.nav-tabs::-webkit-scrollbar-thumb:hover {
+  background: rgba(232,112,90,0.7);
+}
+
+.nav-tab {
+  padding: 0 16px;
+  height: 42px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: all 0.15s;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.nav-tab:hover { color: var(--accent); }
+.nav-tab.active {
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  border-bottom-color: var(--accent);
+}
+
+/* MARKET STRIP */
+.market-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+
+.market-cell {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  padding: 12px 14px;
+  transition: background 0.15s;
+}
+
+.market-cell:hover {
+  background: rgba(255,255,255,0.95);
+}
+
+.mc-label {
+  font-size: 10px;
+  color: var(--ink4);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.mc-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.mc-chg {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+}
+
+.mc-chg.up { color: var(--green); }
+.mc-chg.dn { color: var(--red); }
+
+/* MAIN FEED */
+.feed-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 32px;
+}
+
+/* SECTION HEADER */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.section-label {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* LEAD ARTICLE */
+.lead-article {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+}
+
+.lead-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--grad-main);
+  color: white;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
+  margin-bottom: 10px;
+}
+
+.lead-img {
+  width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 3px;
+  margin-bottom: 14px;
+  background: var(--cream3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.lead-img-placeholder {
+  width: 100%;
+  height: 240px;
+  background: var(--grad-soft);
+  border-radius: 3px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.lead-img-placeholder::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 10px,
+    rgba(123,108,240,0.04) 10px,
+    rgba(123,108,240,0.04) 20px
+  );
+}
+
+.img-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink4);
+  letter-spacing: 0.05em;
+  position: relative;
+  z-index: 1;
+}
+
+.lead-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+  margin-bottom: 10px;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.lead-deck {
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink2);
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+
+.lead-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 10px;
+  color: var(--ink4);
+}
+
+.lead-meta-divider { opacity: 0.3; }
+
+/* ARTICLE CARD */
+.article-card {
+  display: grid;
+  grid-template-columns: 1fr 100px;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border2);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.article-card:hover { opacity: 0.75; }
+.article-card:last-child { border-bottom: none; }
+
+.ac-tag {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 5px;
+}
+
+.ac-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.ac-deck {
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  color: var(--ink3);
+  line-height: 1.55;
+  margin-bottom: 6px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ac-meta {
+  font-size: 10px;
+  color: var(--ink4);
+}
+
+.ac-img {
+  width: 100px;
+  height: 70px;
+  background: var(--cream2);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ac-img-inner {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--cream2), var(--cream3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+/* RISK PANEL */
+.risk-panel {
+  background: linear-gradient(135deg, #1A1730 0%, #2D1F4A 50%, #3D1F35 100%);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.rp-title {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.5);
+  margin-bottom: 14px;
+}
+
+.risk-item {
+  margin-bottom: 10px;
+}
+
+.risk-item:last-child { margin-bottom: 0; }
+
+.ri-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.ri-label {
+  font-size: 11px;
+  color: rgba(245,240,232,0.7);
+}
+
+.ri-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(245,240,255,0.95);
+}
+
+.ri-bar {
+  height: 3px;
+  background: rgba(245,240,232,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ri-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+/* SIGNAL PANEL */
+.signal-panel {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.sp-header {
+  background: rgba(255,255,255,0.5);
+  padding: 10px 14px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  border-bottom: 1px solid var(--border);
+}
+
+.signal-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border2);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.signal-item:last-child { border-bottom: none; }
+
+.signal-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.signal-dot.high { background: var(--red); }
+.signal-dot.med { background: var(--gold); }
+.signal-dot.low { background: var(--green); }
+
+.signal-text {
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  color: var(--ink2);
+  line-height: 1.5;
+}
+
+.signal-conf {
+  font-size: 9px;
+  color: var(--ink4);
+  margin-top: 2px;
+}
+
+/* COMMODITY TABLE */
+.commodity-table {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.ct-header {
+  background: rgba(255,255,255,0.5);
+  padding: 10px 14px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  border-bottom: 1px solid var(--border);
+}
+
+.ct-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.ct-row:last-child { border-bottom: none; }
+
+.ct-name {
+  font-size: 12px;
+  color: var(--ink2);
+}
+
+.ct-unit {
+  font-size: 10px;
+  color: var(--ink4);
+  margin-left: 4px;
+}
+
+.ct-val {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--ink);
+}
+
+.ct-chg {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  min-width: 52px;
+  text-align: right;
+}
+
+.ct-chg.up { color: var(--green); }
+.ct-chg.dn { color: var(--red); }
+
+/* SCENARIO CARD */
+.scenario-section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 3px double var(--border);
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.scenario-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+.sc-header {
+  padding: 10px 14px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sc-header.bull { background: linear-gradient(90deg, #e4f5ec, #dce8ff); color: var(--green); }
+.sc-header.base { background: rgba(255,255,255,0.7); color: var(--ink3); }
+.sc-header.bear { background: linear-gradient(90deg, #fdecea, #ffd6cc); color: var(--coral2); }
+
+.sc-prob {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sc-body { padding: 12px 14px; }
+
+.sc-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border2);
+  font-size: 11px;
+}
+
+.sc-item:last-child { border-bottom: none; }
+.sc-item-label { color: var(--ink4); }
+.sc-item-val { font-family: 'IBM Plex Mono', monospace; font-weight: 500; color: var(--ink); }
+.sc-item-val.pos { color: var(--green); }
+.sc-item-val.neg { color: var(--red); }
+
+.sc-action {
+  margin-top: 10px;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  border-radius: 2px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.sc-action.bull { background: var(--green-light); color: var(--green); }
+.sc-action.base { background: var(--gold-light); color: var(--gold); }
+.sc-action.bear { background: var(--red-light); color: var(--red); }
+
+/* OSINT FEED */
+.osint-item {
+  display: flex;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border2);
+}
+
+.osint-item:last-child { border-bottom: none; }
+
+.osint-tier {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tier-1 { background: linear-gradient(135deg, #fdecea, #ffd6cc); color: var(--coral2); }
+.tier-2 { background: var(--purple-light); color: var(--accent); }
+.tier-3 { background: var(--blue-light); color: var(--blue); }
+
+.osint-content {}
+.osint-source { font-size: 10px; color: var(--ink4); margin-bottom: 3px; }
+.osint-headline { font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.01em; color: var(--ink); line-height: 1.4; margin-bottom: 4px; }
+.osint-analysis { font-size: 11px; color: var(--ink3); line-height: 1.5; font-style: italic; }
+.osint-signal { display: inline-block; font-size: 9px; font-weight: 500; padding: 2px 6px; border-radius: 2px; margin-top: 4px; letter-spacing: 0.05em; }
+.sig-neg { background: linear-gradient(90deg, #fdecea, #ffd6cc); color: var(--coral2); }
+.sig-pos { background: linear-gradient(90deg, #e4f5ec, #dce8ff); color: var(--green); }
+.sig-neu { background: var(--purple-light); color: var(--accent); }
+
+/* FOOTER */
+.feed-footer {
+  border-top: 3px solid var(--accent);
+  margin-top: 40px;
+  padding: 16px 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.footer-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink4);
+}
+
+.footer-classified {
+  font-size: 10px;
+  color: var(--red);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .feed-layout { grid-template-columns: 1fr; }
+  .scenario-grid { grid-template-columns: 1fr; }
+  .market-strip { grid-template-columns: repeat(2, 1fr); }
+  .market-strip .market-cell:last-child { grid-column: 1 / -1; }
+  .masthead-title { font-size: 36px; }
+  .topbar-sub { display: none; }
+}
+
+@media (max-width: 480px) {
+  .market-strip { grid-template-columns: 1fr 1fr; }
+  .lead-headline { font-size: 20px; }
+  .scenario-grid { grid-template-columns: 1fr; }
+}
+
+/* ARTICLE MODAL */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(28,26,22,0.7);
+  z-index: 500;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow-y: auto;
+  backdrop-filter: blur(3px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal-box {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(20px);
+  width: 100%;
+  max-width: 760px;
+  border-top: 4px solid;
+  border-image: var(--grad-main) 1;
+  animation: slideUp 0.25s ease;
+  position: relative;
+  margin: auto;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(24px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  background: var(--ink);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(245,240,255,0.95);
+  font-size: 16px;
+  font-family: 'Barlow', sans-serif;
+  z-index: 10;
+}
+
+.modal-close-btn:hover { background: var(--accent); }
+
+.modal-header {
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.modal-tag {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+
+.modal-tag.kategori { background: var(--grad-main); color: white; }
+.modal-tag.tier-tag { background: var(--ink2); color: rgba(245,240,255,0.9); }
+.modal-tag.conf-high { background: var(--green-light); color: var(--green); }
+.modal-tag.conf-med  { background: var(--gold-light); color: var(--gold); }
+.modal-tag.conf-low  { background: var(--red-light); color: var(--red); }
+
+.modal-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  margin-bottom: 12px;
+}
+
+.modal-deck {
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  color: var(--ink2);
+  line-height: 1.65;
+  margin-bottom: 14px;
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+}
+
+.modal-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  color: var(--ink4);
+  flex-wrap: wrap;
+}
+
+.modal-meta-sep { opacity: 0.3; }
+
+.modal-img {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, var(--cream2), var(--cream3));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-body {
+  padding: 24px 32px;
+}
+
+.modal-body-section {
+  margin-bottom: 24px;
+}
+
+.modal-section-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.modal-para {
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+
+.modal-para:last-child { margin-bottom: 0; }
+
+.modal-analysis-box {
+  background: linear-gradient(135deg, #1A1730 0%, #2D1F4A 50%, #3D1F35 100%);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+}
+
+.modal-analysis-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.5);
+  margin-bottom: 10px;
+}
+
+.modal-analysis-text {
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: rgba(245,240,255,0.95);
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+.modal-analysis-text:last-child { margin-bottom: 0; }
+
+.modal-key-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.modal-fact-card {
+  background: var(--grad-soft);
+  border-left: 3px solid var(--accent);
+  padding: 10px 12px;
+}
+
+.modal-fact-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink4);
+  margin-bottom: 4px;
+}
+
+.modal-fact-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.modal-rekomendasi {
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.7);
+}
+
+.modal-rek-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink3);
+  margin-bottom: 8px;
+}
+
+.modal-rek-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+.modal-rek-item:last-child { margin-bottom: 0; }
+
+.modal-rek-bullet {
+  width: 16px;
+  height: 16px;
+  background: var(--grad-main);
+  color: rgba(245,240,255,0.95);
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.modal-footer {
+  padding: 14px 32px;
+  border-top: 1px solid var(--border);
+  background: var(--grad-soft);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-footer-brand {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink3);
+}
+
+.modal-footer-classified {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+/* card hover hint */
+.article-card { cursor: pointer; transition: all 0.15s; }
+.article-card:hover { background: var(--cream2); }
+.article-card:hover .ac-headline { color: var(--red); }
+
+.lead-article { cursor: pointer; }
+.lead-article:hover .lead-headline { color: var(--accent); }
+
+.read-more-hint {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+  animation: fadeIn 0.5s ease forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+.stagger > * {
+  opacity: 0;
+  animation: fadeIn 0.4s ease forwards;
+}
+
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger > *:nth-child(5) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="topbar-logo">IRIS</div>
+    <div class="topbar-divider"></div>
+    <div class="topbar-sub">Intelligence Feed</div>
+  </div>
+  <div class="topbar-right">
+    <div class="iris-report-badge">
+      <div>
+        Laporan Intelijen Strategis<br>
+        Disusun oleh <strong>IRIS AI</strong>
+      </div>
+    </div>
+    <div class="iris-badge-divider"></div>
+    <div class="iris-dot-wrap">
+      <div class="iris-ai-dot"></div>
+      <div class="iris-ai-label">IRIS</div>
+    </div>
+    <div class="topbar-clock" id="clock">--:--</div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-label">PASAR</div>
+  <div style="overflow:hidden;flex:1;">
+    <div class="ticker-track">
+      <span class="ticker-item"><span class="ticker-name">IHSG</span><span class="ticker-val">7.234,18</span><span class="ticker-chg dn">▼ -0,42%</span></span>
+      <span class="ticker-item"><span class="ticker-name">USD/IDR</span><span class="ticker-val">16.285</span><span class="ticker-chg dn">▼ +0,18%</span></span>
+      <span class="ticker-item"><span class="ticker-name">CPO</span><span class="ticker-val">4.120 MYR</span><span class="ticker-chg up">▲ +1,24%</span></span>
+      <span class="ticker-item"><span class="ticker-name">COAL</span><span class="ticker-val">USD 108,50</span><span class="ticker-chg dn">▼ -0,64%</span></span>
+      <span class="ticker-item"><span class="ticker-name">NIKEL</span><span class="ticker-val">USD 16.240</span><span class="ticker-chg up">▲ +0,87%</span></span>
+      <span class="ticker-item"><span class="ticker-name">BRENT</span><span class="ticker-val">USD 74,18</span><span class="ticker-chg dn">▼ -1,12%</span></span>
+      <span class="ticker-item"><span class="ticker-name">EMAS</span><span class="ticker-val">USD 3.218</span><span class="ticker-chg up">▲ +0,34%</span></span>
+      <span class="ticker-item"><span class="ticker-name">SBN 10Y</span><span class="ticker-val">6,82%</span><span class="ticker-chg dn">▼ -3bps</span></span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item"><span class="ticker-name">IHSG</span><span class="ticker-val">7.234,18</span><span class="ticker-chg dn">▼ -0,42%</span></span>
+      <span class="ticker-item"><span class="ticker-name">USD/IDR</span><span class="ticker-val">16.285</span><span class="ticker-chg dn">▼ +0,18%</span></span>
+      <span class="ticker-item"><span class="ticker-name">CPO</span><span class="ticker-val">4.120 MYR</span><span class="ticker-chg up">▲ +1,24%</span></span>
+      <span class="ticker-item"><span class="ticker-name">COAL</span><span class="ticker-val">USD 108,50</span><span class="ticker-chg dn">▼ -0,64%</span></span>
+      <span class="ticker-item"><span class="ticker-name">NIKEL</span><span class="ticker-val">USD 16.240</span><span class="ticker-chg up">▲ +0,87%</span></span>
+      <span class="ticker-item"><span class="ticker-name">BRENT</span><span class="ticker-val">USD 74,18</span><span class="ticker-chg dn">▼ -1,12%</span></span>
+      <span class="ticker-item"><span class="ticker-name">EMAS</span><span class="ticker-val">USD 3.218</span><span class="ticker-chg up">▲ +0,34%</span></span>
+      <span class="ticker-item"><span class="ticker-name">SBN 10Y</span><span class="ticker-val">6,82%</span><span class="ticker-chg dn">▼ -3bps</span></span>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- MASTHEAD -->
+  <div class="masthead fade-in">
+    <div class="masthead-top">
+      <div class="masthead-title">IRIS <span>Intelligence</span> Feed</div>
+      <div class="masthead-date">
+        Jumat, 11 April 2026<br>
+        Edisi Harian · Vol. 1 No. 47
+      </div>
+    </div>
+    <div class="masthead-tagline">Untuk Kalangan Terbatas &nbsp;·&nbsp; Analisis Pasar · Geopolitik · OSINT · Institusional</div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" onclick="setTab(this,'overview')">Overview</button>
+    <button class="nav-tab" onclick="setTab(this,'geopolitik')">Geopolitik</button>
+    <button class="nav-tab" onclick="setTab(this,'nasional')">Berita Nasional</button>
+    <button class="nav-tab" onclick="setTab(this,'politik')">Politik Dalam Negeri</button>
+    <button class="nav-tab" onclick="setTab(this,'ekonomi')">Ekonomi &amp; Bisnis</button>
+    <button class="nav-tab" onclick="setTab(this,'hukum')">Hukum &amp; HAM</button>
+    <button class="nav-tab" onclick="setTab(this,'polri')">Polri</button>
+  </div>
+
+  <!-- MARKET STRIP -->
+  <div class="market-strip stagger">
+    <div class="market-cell">
+      <div class="mc-label">IHSG</div>
+      <div class="mc-val">7.234</div>
+      <div class="mc-chg dn">▼ -30,4 (-0,42%)</div>
+    </div>
+    <div class="market-cell">
+      <div class="mc-label">USD/IDR</div>
+      <div class="mc-val">16.285</div>
+      <div class="mc-chg dn">▼ +29 poin</div>
+    </div>
+    <div class="market-cell">
+      <div class="mc-label">CPO</div>
+      <div class="mc-val">4.120</div>
+      <div class="mc-chg up">▲ +1,24%</div>
+    </div>
+    <div class="market-cell">
+      <div class="mc-label">Brent</div>
+      <div class="mc-val">74,18</div>
+      <div class="mc-chg dn">▼ -1,12%</div>
+    </div>
+    <div class="market-cell">
+      <div class="mc-label">Emas</div>
+      <div class="mc-val">3.218</div>
+      <div class="mc-chg up">▲ +0,34%</div>
+    </div>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="feed-layout">
+
+    <!-- LEFT: MAIN FEED -->
+    <div>
+
+      <!-- LEAD ARTICLE -->
+      <div class="section-header">
+        <div class="section-label">Laporan Utama</div>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="lead-article">
+        <div class="lead-tag">🔴 TIER 1 · ACTIONABLE</div>
+        <div class="lead-img-placeholder">
+          <span class="img-label">[ Gambar: Gedung BI / Grafik IHSG ]</span>
+        </div>
+        <div class="lead-headline">Tarif Trump dan Tekanan Rupiah: IHSG Berpotensi Uji Support 7.100 Pekan Depan</div>
+        <div class="lead-deck">Eskalasi tarif impor Amerika Serikat memicu arus keluar modal asing dari pasar berkembang. Rupiah melemah ke 16.285 per dolar AS, sementara cadangan devisa BI dinilai cukup untuk menghadapi tekanan jangka pendek. IRIS menilai risiko eksternal berada di level sedang-tinggi.</div>
+        <div class="lead-meta">
+          <span>IRIS Market Engine</span>
+          <span class="lead-meta-divider">·</span>
+          <span>11 April 2026, 16.30 WIB</span>
+          <span class="lead-meta-divider">·</span>
+          <span>Confidence: <strong>Tinggi</strong></span>
+        </div>
+      </div>
+
+      <!-- ARTICLE LIST -->
+      <div class="section-header">
+        <div class="section-label">Berita & Analisis</div>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="stagger">
+
+        <div class="article-card" onclick="openArticle('geo')">
+          <div>
+            <div class="ac-tag">Geopolitik</div>
+            <div class="ac-headline">Hubungan China-AS Memanas: Dampak Ekspor Nikel dan Batubara Indonesia</div>
+            <div class="ac-deck">Eskalasi tarif timbal balik antara Washington dan Beijing berpotensi mengalihkan permintaan komoditas ke pasar alternatif, membuka peluang sekaligus risiko bagi eksportir Indonesia.</div>
+            <div class="ac-meta">IRIS Geo Engine · 11 Apr 2026 · 08.00 WIB</div>
+            <div class="read-more-hint">Baca Analisis →</div>
+          </div>
+          <div class="ac-img">
+            <div class="ac-img-inner">🌏</div>
+          </div>
+        </div>
+
+        <div class="article-card" onclick="openArticle('bi')">
+          <div>
+            <div class="ac-tag">Institusional · BI</div>
+            <div class="ac-headline">RDG Bank Indonesia Mei 2026: Sinyal Pemotongan Suku Bunga Mulai Menguat</div>
+            <div class="ac-deck">Gubernur BI Perry Warjiyo memberikan pernyataan yang lebih dovish dalam konferensi pers terakhir, mengindikasikan kemungkinan pemotongan suku bunga acuan jika tekanan eksternal mereda.</div>
+            <div class="ac-meta">IRIS Institutional Engine · 10 Apr 2026</div>
+            <div class="read-more-hint">Baca Analisis →</div>
+          </div>
+          <div class="ac-img">
+            <div class="ac-img-inner">🏦</div>
+          </div>
+        </div>
+
+        <div class="article-card" onclick="openArticle('osint')">
+          <div>
+            <div class="ac-tag">OSINT · Sosial</div>
+            <div class="ac-headline">Trending di X Indonesia: Isu Harga Pangan Dominasi Percakapan Publik</div>
+            <div class="ac-deck">Dalam 48 jam terakhir, isu kenaikan harga beras dan minyak goreng kembali menjadi topik utama di platform media sosial, berpotensi meningkatkan tekanan politik pada pemerintah.</div>
+            <div class="ac-meta">IRIS OSINT Engine · 11 Apr 2026 · 07.45 WIB</div>
+            <div class="read-more-hint">Baca Analisis →</div>
+          </div>
+          <div class="ac-img">
+            <div class="ac-img-inner">🔍</div>
+          </div>
+        </div>
+
+        <div class="article-card" onclick="openArticle('cpo')">
+          <div>
+            <div class="ac-tag">Komoditas · CPO</div>
+            <div class="ac-headline">CPO Menguat Didukung Permintaan India Jelang Musim Konsumsi</div>
+            <div class="ac-deck">Harga CPO di Bursa Malaysia naik 1,24% seiring meningkatnya impor India dan penurunan stok Malaysia. Saham emiten sawit di IHSG berpotensi outperform pekan depan.</div>
+            <div class="ac-meta">IRIS Commodity Engine · 11 Apr 2026</div>
+            <div class="read-more-hint">Baca Analisis →</div>
+          </div>
+          <div class="ac-img">
+            <div class="ac-img-inner">🌴</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SCENARIO SECTION -->
+      <div class="scenario-section">
+        <div class="section-header">
+          <div class="section-label">Analisis Skenario Pekan Depan</div>
+          <div class="section-line"></div>
+        </div>
+        <div style="font-family:'Barlow',sans-serif;font-size:13px;color:var(--ink3);margin-bottom:16px;line-height:1.6;">
+          Isu: <strong style="color:var(--ink);">Eskalasi Tarif AS dan Dampak ke Pasar Indonesia</strong>
+        </div>
+
+        <div class="scenario-grid">
+          <div class="scenario-card">
+            <div class="sc-header bull">
+              <span>Bull Case</span>
+              <span class="sc-prob">25%</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-item"><span class="sc-item-label">IHSG</span><span class="sc-item-val pos">+1,5–2,5%</span></div>
+              <div class="sc-item"><span class="sc-item-label">IDR</span><span class="sc-item-val pos">Ke 15.900</span></div>
+              <div class="sc-item"><span class="sc-item-label">Pemicu</span><span class="sc-item-val">Negosiasi tarif</span></div>
+              <div class="sc-action bull">Accumulate Saham</div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="sc-header base">
+              <span>Base Case</span>
+              <span class="sc-prob">60%</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-item"><span class="sc-item-label">IHSG</span><span class="sc-item-val">Sideways ±0,8%</span></div>
+              <div class="sc-item"><span class="sc-item-label">IDR</span><span class="sc-item-val">16.100–16.400</span></div>
+              <div class="sc-item"><span class="sc-item-label">Pemicu</span><span class="sc-item-val">Status quo</span></div>
+              <div class="sc-action base">Monitor & Wait</div>
+            </div>
+          </div>
+
+          <div class="scenario-card">
+            <div class="sc-header bear">
+              <span>Bear Case</span>
+              <span class="sc-prob">15%</span>
+            </div>
+            <div class="sc-body">
+              <div class="sc-item"><span class="sc-item-label">IHSG</span><span class="sc-item-val neg">-3 hingga -5%</span></div>
+              <div class="sc-item"><span class="sc-item-label">IDR</span><span class="sc-item-val neg">Ke 16.800+</span></div>
+              <div class="sc-item"><span class="sc-item-label">Pemicu</span><span class="sc-item-val">Eskalasi penuh</span></div>
+              <div class="sc-action bear">Hedge / Reduce</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OSINT FEED -->
+      <div style="margin-top:28px;padding-top:24px;border-top:1px solid var(--border);">
+        <div class="section-header">
+          <div class="section-label">OSINT Intelligence</div>
+          <div class="section-line"></div>
+        </div>
+
+        <div class="stagger">
+
+          <div class="osint-item">
+            <div class="osint-tier tier-1">T1</div>
+            <div class="osint-content">
+              <div class="osint-source">Bisnis.com · 11 Apr 2026 · 09.12 WIB</div>
+              <div class="osint-headline">OJK Rilis Aturan Baru Batas Kepemilikan Asing di Perbankan Indonesia</div>
+              <div class="osint-analysis">Regulasi ini berpotensi mempengaruhi valuasi saham-saham perbankan besar. Investor asing mungkin mereview posisi di BBCA, BBRI, dan BMRI dalam jangka pendek.</div>
+              <span class="osint-signal sig-neg">Negatif Jangka Pendek</span>
+            </div>
+          </div>
+
+          <div class="osint-item">
+            <div class="osint-tier tier-2">T2</div>
+            <div class="osint-content">
+              <div class="osint-source">Kompas.id · 11 Apr 2026 · 07.30 WIB</div>
+              <div class="osint-headline">Prabowo Umumkan Percepatan Program Hilirisasi Nikel untuk Baterai EV</div>
+              <div class="osint-analysis">Pernyataan ini memperkuat tren positif jangka menengah untuk emiten nikel domestik, meski implementasi jangka pendek masih perlu dipantau.</div>
+              <span class="osint-signal sig-pos">Positif Jangka Menengah</span>
+            </div>
+          </div>
+
+          <div class="osint-item">
+            <div class="osint-tier tier-3">T3</div>
+            <div class="osint-content">
+              <div class="osint-source">Detik Finance · 10 Apr 2026 · 18.45 WIB</div>
+              <div class="osint-headline">Realisasi Penerimaan Pajak Q1 2026 Mencapai 82% dari Target</div>
+              <div class="osint-analysis">Angka di atas ekspektasi ini memberikan ruang fiskal lebih bagi pemerintah dan mengurangi tekanan terhadap penerbitan SBN baru dalam jangka dekat.</div>
+              <span class="osint-signal sig-pos">Positif Fiskal</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: SIDEBAR -->
+    <div>
+
+      <!-- RISK PANEL -->
+      <div class="risk-panel">
+        <div class="rp-title">Skor Risiko Hari Ini</div>
+        <div class="risk-item">
+          <div class="ri-header">
+            <span class="ri-label">Pasar Domestik</span>
+            <span class="ri-score">6/10</span>
+          </div>
+          <div class="ri-bar"><div class="ri-fill" style="width:60%;background:#EF5350;"></div></div>
+        </div>
+        <div class="risk-item">
+          <div class="ri-header">
+            <span class="ri-label">Eksternal</span>
+            <span class="ri-score">7/10</span>
+          </div>
+          <div class="ri-bar"><div class="ri-fill" style="width:70%;background:#EF5350;"></div></div>
+        </div>
+        <div class="risk-item">
+          <div class="ri-header">
+            <span class="ri-label">Valuta (IDR)</span>
+            <span class="ri-score">6/10</span>
+          </div>
+          <div class="ri-bar"><div class="ri-fill" style="width:60%;background:#FFA726;"></div></div>
+        </div>
+        <div class="risk-item">
+          <div class="ri-header">
+            <span class="ri-label">Likuiditas</span>
+            <span class="ri-score">4/10</span>
+          </div>
+          <div class="ri-bar"><div class="ri-fill" style="width:40%;background:#66BB6A;"></div></div>
+        </div>
+        <div class="risk-item">
+          <div class="ri-header">
+            <span class="ri-label">Sosial/Kamtibmas</span>
+            <span class="ri-score">3/10</span>
+          </div>
+          <div class="ri-bar"><div class="ri-fill" style="width:30%;background:#66BB6A;"></div></div>
+        </div>
+      </div>
+
+      <!-- SIGNAL PANEL -->
+      <div class="signal-panel">
+        <div class="sp-header">Signal Aktif</div>
+        <div class="signal-item">
+          <div class="signal-dot high"></div>
+          <div>
+            <div class="signal-text">Tekanan jual asing berlanjut di sektor perbankan — monitor foreign flow harian</div>
+            <div class="signal-conf">Confidence: Tinggi · Tier 1</div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot med"></div>
+          <div>
+            <div class="signal-text">CPO rally berpotensi berlanjut — lirik emiten sawit AALI, SIMP, LSIP</div>
+            <div class="signal-conf">Confidence: Sedang · Tier 2</div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot low"></div>
+          <div>
+            <div class="signal-text">SBN 10Y yield mendekati support — potensi penguatan harga obligasi</div>
+            <div class="signal-conf">Confidence: Sedang · Tier 2</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COMMODITY TABLE -->
+      <div class="commodity-table">
+        <div class="ct-header">Komoditas Strategis</div>
+        <div class="ct-row">
+          <span class="ct-name">CPO <span class="ct-unit">MYR/MT</span></span>
+          <span class="ct-val">4.120</span>
+          <span class="ct-chg up">▲ +1,24%</span>
+        </div>
+        <div class="ct-row">
+          <span class="ct-name">Batubara <span class="ct-unit">USD/MT</span></span>
+          <span class="ct-val">108,50</span>
+          <span class="ct-chg dn">▼ -0,64%</span>
+        </div>
+        <div class="ct-row">
+          <span class="ct-name">Nikel <span class="ct-unit">USD/MT</span></span>
+          <span class="ct-val">16.240</span>
+          <span class="ct-chg up">▲ +0,87%</span>
+        </div>
+        <div class="ct-row">
+          <span class="ct-name">Brent <span class="ct-unit">USD/bbl</span></span>
+          <span class="ct-val">74,18</span>
+          <span class="ct-chg dn">▼ -1,12%</span>
+        </div>
+        <div class="ct-row">
+          <span class="ct-name">Emas <span class="ct-unit">USD/troy oz</span></span>
+          <span class="ct-val">3.218</span>
+          <span class="ct-chg up">▲ +0,34%</span>
+        </div>
+        <div class="ct-row">
+          <span class="ct-name">ICP <span class="ct-unit">USD/bbl</span></span>
+          <span class="ct-val">71,42</span>
+          <span class="ct-chg dn">▼ -0,98%</span>
+        </div>
+      </div>
+
+      <!-- POLICY SIGNAL -->
+      <div class="signal-panel">
+        <div class="sp-header">Policy Stance</div>
+        <div class="signal-item">
+          <div class="signal-dot med"></div>
+          <div>
+            <div class="signal-text"><strong>BI:</strong> Dovish — sinyal pemotongan rate Mei 2026</div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot med"></div>
+          <div>
+            <div class="signal-text"><strong>OJK:</strong> Ketat — aturan kepemilikan asing baru</div>
+          </div>
+        </div>
+        <div class="signal-item">
+          <div class="signal-dot low"></div>
+          <div>
+            <div class="signal-text"><strong>Kemenkeu:</strong> Ekspansif — penerimaan pajak on-track</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="feed-footer">
+    <div class="footer-brand">IRIS Intelligence Feed</div>
+    <div class="footer-meta">Edisi 11 April 2026 · Digenerate 16:30 WIB</div>
+    <div class="footer-classified">Untuk Kalangan Terbatas</div>
+  </div>
+
+</div>
+
+<!-- ARTICLE MODAL -->
+<div class="modal-overlay" id="articleModal" onclick="closeModalOutside(event)">
+  <div class="modal-box" id="modalBox">
+    <button class="modal-close-btn" onclick="closeModal()">✕</button>
+
+    <div class="modal-header">
+      <div class="modal-tag-row" id="modalTagRow"></div>
+      <div class="modal-headline" id="modalHeadline"></div>
+      <div class="modal-deck" id="modalDeck"></div>
+      <div class="modal-meta-row" id="modalMeta"></div>
+    </div>
+
+    <div class="modal-img" id="modalImg"></div>
+
+    <div class="modal-body">
+
+      <!-- RINGKASAN BERITA -->
+      <div class="modal-body-section">
+        <div class="modal-section-label">Ringkasan Berita</div>
+        <div id="modalBodyText"></div>
+      </div>
+
+      <!-- FAKTA KUNCI -->
+      <div class="modal-body-section" id="modalFactsWrap">
+        <div class="modal-section-label">Fakta Kunci</div>
+        <div class="modal-key-facts" id="modalFacts"></div>
+      </div>
+
+      <!-- ANALISIS MENDALAM -->
+      <div class="modal-body-section">
+        <div class="modal-section-label">Analisis Mendalam IRIS</div>
+        <div class="modal-analysis-box" id="modalAnalysis"></div>
+      </div>
+
+      <!-- REKOMENDASI -->
+      <div class="modal-body-section" id="modalRekWrap">
+        <div class="modal-section-label">Rekomendasi Aksi</div>
+        <div class="modal-rekomendasi" id="modalRek"></div>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+      <div class="modal-footer-brand">IRIS Intelligence Feed</div>
+      <div class="modal-footer-classified">Untuk Kalangan Terbatas</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─────────────────────────────────────────
+   ARTIKEL DATA
+   Struktur dua layer:
+   - card: data untuk tampilan card (ringkasan)
+   - detail: konten lengkap untuk modal
+   IRIS mengisi objek ini via JSON inject
+───────────────────────────────────────── */
+const ARTICLES = {
+
+  lead: {
+    card: {
+      kategori: 'Pasar Utama',
+      tier: 'TIER 1 · ACTIONABLE',
+      confidence: 'Tinggi',
+      headline: 'Tarif Trump dan Tekanan Rupiah: IHSG Berpotensi Uji Support 7.100 Pekan Depan',
+      deck: 'Eskalasi tarif impor Amerika Serikat memicu arus keluar modal asing dari pasar berkembang. Rupiah melemah ke 16.285 per dolar AS, sementara cadangan devisa BI dinilai cukup menghadapi tekanan jangka pendek.',
+      penulis: 'IRIS Market Engine',
+      waktu: '11 April 2026 · 16.30 WIB',
+      emoji: '📊'
+    },
+    detail: {
+      body: [
+        'Pasar keuangan Indonesia kembali menghadapi tekanan eksternal yang signifikan seiring eskalasi perang tarif antara Amerika Serikat dan China yang memasuki babak baru pada pekan ini.',
+        'Kebijakan tarif AS yang diberlakukan Presiden Trump telah memicu gelombang aksi jual di pasar saham dan mata uang emerging market, termasuk Indonesia. IHSG mencatat penurunan 0,42% ke level 7.234 pada penutupan Jumat dengan nilai net sell asing mencapai Rp 1,2 triliun.',
+        'Rupiah melemah ke level 16.285 per dolar AS, mendekati batas psikologis 16.300 yang menjadi perhatian Bank Indonesia. Gubernur BI Perry Warjiyo menyatakan pihaknya siap melakukan intervensi di pasar spot dan pasar Domestic Non-Deliverable Forward (DNDF) untuk menjaga stabilitas.'
+      ],
+      fakta: [
+        { label: 'IHSG Penutupan', nilai: '7.234,18' },
+        { label: 'Net Sell Asing', nilai: 'Rp 1,2 T' },
+        { label: 'USD/IDR', nilai: '16.285' },
+        { label: 'Cadangan Devisa', nilai: 'USD 157,1 M' }
+      ],
+      analisis: [
+        'Tekanan yang terjadi saat ini bersifat eksternal dan struktural — bukan semata reaksi panik jangka pendek. Selama ketidakpastian tarif AS belum mereda, tekanan pada aset EM termasuk IHSG dan rupiah berpotensi berlanjut.',
+        'IRIS menilai level support kritis IHSG berada di 7.100 (MA 200 harian). Penembusan ke bawah level ini akan membuka potensi koreksi lebih dalam menuju 6.950. Dari sisi rupiah, level 16.500 menjadi batas psikologis yang jika ditembus akan memaksa BI melakukan intervensi lebih agresif.',
+        'Sisi positif: cadangan devisa BI masih solid di USD 157,1 miliar (setara 7,6 bulan impor) dan kondisi fiskal domestik relatif stabil dengan penerimaan pajak Q1 on-track.'
+      ],
+      rekomendasi: [
+        'Monitor level 7.100 IHSG sebagai support kritis — penembusan = tambah defensif',
+        'Pertahankan exposure di sektor yang diuntungkan IDR lemah: eksportir (mining, CPO)',
+        'Kurangi exposure saham perbankan sampai tekanan asing mereda',
+        'Watch: data inflasi BPS pekan depan sebagai katalis arah kebijakan BI'
+      ]
+    }
+  },
+
+  geo: {
+    card: {
+      kategori: 'Geopolitik',
+      tier: 'TIER 1',
+      confidence: 'Tinggi',
+      headline: 'Hubungan China-AS Memanas: Dampak Ekspor Nikel dan Batubara Indonesia',
+      deck: 'Eskalasi tarif timbal balik antara Washington dan Beijing berpotensi mengalihkan permintaan komoditas ke pasar alternatif, membuka peluang sekaligus risiko bagi eksportir Indonesia.',
+      penulis: 'IRIS Geo Engine',
+      waktu: '11 Apr 2026 · 08.00 WIB',
+      emoji: '🌏'
+    },
+    detail: {
+      body: [
+        'Konflik tarif AS-China yang semakin dalam memasuki fase baru yang berpotensi mengubah peta perdagangan komoditas global secara struktural. China telah mengumumkan tarif balasan 84% atas barang-barang Amerika, sementara AS membalas dengan tarif 145% atas produk China.',
+        'Bagi Indonesia, eskalasi ini menciptakan dua skenario yang berlawanan. Di satu sisi, nikel Indonesia yang diproses menjadi bahan baterai kendaraan listrik menghadapi risiko perlambatan permintaan jika industri EV China terdampak. Di sisi lain, batubara Indonesia berpeluang mengambil pangsa pasar yang ditinggalkan batubara Amerika di pasar Asia.',
+        'Dinamika ini juga mempersulit posisi diplomatik Indonesia yang berusaha menjaga hubungan baik dengan kedua kekuatan besar sekaligus — suatu balancing act yang semakin sulit di tengah tekanan memilih sisi.'
+      ],
+      fakta: [
+        { label: 'Tarif AS ke China', nilai: '145%' },
+        { label: 'Tarif China ke AS', nilai: '84%' },
+        { label: 'Ekspor Nikel RI', nilai: 'USD 4,2 M/bln' },
+        { label: 'Ekspor Batubara RI', nilai: 'USD 2,8 M/bln' }
+      ],
+      analisis: [
+        'IRIS menilai dampak neto bagi Indonesia dalam jangka pendek (1–3 bulan) adalah NEGATIF TIPIS. Tekanan pada sektor nikel lebih besar dari peluang di sektor batubara karena harga nikel sudah tertekan sejak oversupply 2024.',
+        'Dalam jangka menengah (3–12 bulan), jika ketegangan berlanjut tanpa resolusi, Indonesia berpeluang menjadi benefisiari dari diversifikasi rantai pasok global — terutama untuk menarik FDI manufaktur yang meninggalkan China.',
+        'Faktor kritis: sikap pemerintahan Prabowo dalam menghadapi tekanan untuk memilih blok. Netralitas strategis yang dipertahankan saat ini adalah aset diplomatik yang perlu dijaga.'
+      ],
+      rekomendasi: [
+        'Underweight nikel jangka pendek — awasi perkembangan permintaan baterai EV China',
+        'Overweight batubara termal — potensi demand diversion dari Asia Selatan dan Asia Tenggara',
+        'Monitor kebijakan hilirisasi nikel Prabowo — ada potensi kebijakan baru sebagai respons',
+        'Watch: pertemuan ASEAN-AS dan ASEAN-China bulan depan untuk sinyal diplomatik'
+      ]
+    }
+  },
+
+  bi: {
+    card: {
+      kategori: 'Institusional · BI',
+      tier: 'TIER 2',
+      confidence: 'Sedang',
+      headline: 'RDG Bank Indonesia Mei 2026: Sinyal Pemotongan Suku Bunga Mulai Menguat',
+      deck: 'Gubernur BI Perry Warjiyo memberikan pernyataan yang lebih dovish, mengindikasikan kemungkinan pemotongan suku bunga acuan jika tekanan eksternal mereda.',
+      penulis: 'IRIS Institutional Engine',
+      waktu: '10 Apr 2026',
+      emoji: '🏦'
+    },
+    detail: {
+      body: [
+        'Dalam konferensi pers pasca-RDG April 2026, Gubernur BI Perry Warjiyo menggunakan framing yang lebih akomodatif dibanding bulan-bulan sebelumnya. Pernyataan kunci: "BI memiliki ruang untuk menurunkan suku bunga jika inflasi terus terkendali dan tekanan eksternal mereda."',
+        'Inflasi Maret 2026 tercatat 2,1% YoY — berada di bawah titik tengah target BI sebesar 2,5%, memberikan ruang kebijakan yang memadai. Di sisi lain, tekanan rupiah akibat gejolak tarif AS menjadi faktor penahan yang membuat BI belum berani bergerak.',
+        'Konsensus pasar saat ini memperkirakan peluang pemotongan 25bps pada RDG Mei sebesar 45% — meningkat dari hanya 20% sebulan lalu.'
+      ],
+      fakta: [
+        { label: 'BI Rate Saat Ini', nilai: '5,75%' },
+        { label: 'Inflasi Maret', nilai: '2,1% YoY' },
+        { label: 'Target Inflasi BI', nilai: '1,5–3,5%' },
+        { label: 'Prob. Cut Mei', nilai: '45%' }
+      ],
+      analisis: [
+        'IRIS menilai probabilitas pemotongan BI Rate pada Mei 2026 sebesar 40–50%, bukan consensus 45%. Faktor penentu utama adalah stabilitas rupiah dalam 3 minggu ke depan.',
+        'Jika rupiah berhasil stabil di kisaran 16.000–16.200 sebelum RDG Mei, BI kemungkinan akan memotong 25bps. Jika rupiah masih di atas 16.300, BI akan menahan.',
+        'Implikasi ke pasar: pemotongan BI Rate akan positif untuk saham perbankan, sektor properti, dan obligasi pemerintah. Namun sinyal pemotongan yang terlalu agresif bisa memperlemah rupiah lebih lanjut — BI harus hati-hati dalam komunikasi.'
+      ],
+      rekomendasi: [
+        'Akumulasi SBN tenor 5–10 tahun secara bertahap — yield menarik jika cut terjadi',
+        'Perhatikan saham properti dan KPR-driven banks jika rate cut terkonfirmasi',
+        'Set alert: RDG BI berikutnya tanggal 20–21 Mei 2026',
+        'Watch: data inflasi April (rilis 2 Mei) sebagai katalis utama keputusan BI'
+      ]
+    }
+  },
+
+  osint: {
+    card: {
+      kategori: 'OSINT · Sosial',
+      tier: 'TIER 1',
+      confidence: 'Tinggi',
+      headline: 'Trending di X Indonesia: Isu Harga Pangan Dominasi Percakapan Publik',
+      deck: 'Dalam 48 jam terakhir, isu kenaikan harga beras dan minyak goreng kembali menjadi topik utama di platform media sosial, berpotensi meningkatkan tekanan politik pada pemerintah.',
+      penulis: 'IRIS OSINT Engine',
+      waktu: '11 Apr 2026 · 07.45 WIB',
+      emoji: '🔍'
+    },
+    detail: {
+      body: [
+        'IRIS mendeteksi lonjakan signifikan dalam volume percakapan terkait harga pangan di platform X (Twitter) Indonesia dalam 48 jam terakhir. Volume tweet dengan hashtag #HargaBeras dan #MinyakGorengMahal mencapai 187.000 dalam 24 jam — naik 340% dari rata-rata harian.',
+        'Sentimen yang terdeteksi bersifat sangat negatif terhadap pemerintah, dengan narasi utama menyalahkan kebijakan ekspor dan impor serta koordinasi antar kementerian yang dianggap lemah. Beberapa akun dengan follower besar (>100K) aktif mengamplifikasi narasi ini.',
+        'Pola yang terdeteksi mirip dengan episode harga pangan 2022 yang berujung pada demonstrasi mahasiswa. IRIS mengklasifikasikan ini sebagai TIER 1 karena potensi eskalasi ke ranah politik yang dapat mempengaruhi stabilitas dan sentimen pasar.'
+      ],
+      fakta: [
+        { label: 'Volume Tweet 24j', nilai: '187.000' },
+        { label: 'Kenaikan Volume', nilai: '+340%' },
+        { label: 'Sentimen Score', nilai: '-4,2 / -5' },
+        { label: 'Akun Amplifier', nilai: '23 akun >100K' }
+      ],
+      analisis: [
+        'IRIS menilai risiko eskalasi isu ini ke demonstrasi fisik dalam 7–14 hari ke depan sebagai SEDANG (35%). Faktor penguat: momentum mendekati musim liburan akademik, tingginya angka pengangguran muda, dan frustrasi terhadap kebijakan pangan yang berulang.',
+        'Dari sudut pandang pasar, isu harga pangan yang viral memiliki tiga dampak potensial: (1) tekanan pada Kemenkeu untuk menambah subsidi → risiko fiskal jangka pendek; (2) potensi kebijakan intervensi harga yang bisa mengganggu margin emiten ritel dan distributor; (3) pelemahan sentimen konsumsi yang berdampak pada saham sektor konsumer.',
+        'Monitoring perlu diperketat untuk mendeteksi munculnya koordinasi aksi unjuk rasa melalui platform Telegram dan WhatsApp.'
+      ],
+      rekomendasi: [
+        'Waspadai saham sektor ritel dan distributor pangan — potensi margin tertekan regulasi',
+        'Monitor kebijakan pemerintah terkait impor beras dan intervensi harga',
+        'Set alert OSINT: keywords "demo", "aksi", "mahasiswa" + "pangan" dalam 7 hari ke depan',
+        'Jika eskalasi terkonfirmasi: underweight sektor konsumer diskresioner'
+      ]
+    }
+  },
+
+  cpo: {
+    card: {
+      kategori: 'Komoditas · CPO',
+      tier: 'TIER 2',
+      confidence: 'Sedang',
+      headline: 'CPO Menguat Didukung Permintaan India Jelang Musim Konsumsi',
+      deck: 'Harga CPO di Bursa Malaysia naik 1,24% seiring meningkatnya impor India dan penurunan stok Malaysia. Saham emiten sawit di IHSG berpotensi outperform pekan depan.',
+      penulis: 'IRIS Commodity Engine',
+      waktu: '11 Apr 2026',
+      emoji: '🌴'
+    },
+    detail: {
+      body: [
+        'Harga CPO di Bursa Malaysia Derivatives Exchange (BMD) menguat 1,24% ke level MYR 4.120 per metrik ton pada Jumat, dipimpin oleh lonjakan permintaan dari India yang memasuki periode konsumsi tinggi menjelang festival Diwali.',
+        'Data stok CPO Malaysia per akhir Maret 2026 turun ke 1,68 juta metrik ton — level terendah sejak September 2023, menunjukkan keketatan pasokan yang mendukung harga. Di sisi lain, produksi Indonesia diperkirakan memasuki fase puncak pada April–Mei yang bisa memberikan tekanan.',
+        'Emiten sawit Indonesia di IHSG merespons positif: AALI naik 2,1%, SIMP naik 1,8%, dan LSIP naik 1,5% pada penutupan Jumat. Foreign buying tercatat di ketiga saham tersebut.'
+      ],
+      fakta: [
+        { label: 'Harga CPO BMD', nilai: 'MYR 4.120/MT' },
+        { label: 'Perubahan Harian', nilai: '+1,24%' },
+        { label: 'Stok Malaysia', nilai: '1,68 juta MT' },
+        { label: 'Impor India YoY', nilai: '+18,3%' }
+      ],
+      analisis: [
+        'IRIS menilai momentum positif CPO berpotensi berlanjut 2–3 pekan ke depan, didukung oleh keketatan stok Malaysia dan permintaan India yang musiman. Target resistance terdekat ada di MYR 4.280.',
+        'Risiko utama: produksi Indonesia yang memasuki puncak musiman dapat menambah pasokan dan menekan harga mulai pertengahan April. Selain itu, regulasi EUDR (European Union Deforestation Regulation) yang mulai berlaku Juni 2026 berpotensi menekan permintaan Eropa dalam jangka menengah.',
+        'Dari sisi saham, valuasi emiten sawit saat ini masih menarik dengan P/E rata-rata 8–10x — di bawah rata-rata historis 12x. AALI adalah pilihan terbaik dengan neraca keuangan terkuat dan diversifikasi produk hilir.'
+      ],
+      rekomendasi: [
+        'Akumulasi AALI dan SIMP selagi momentum CPO positif — target 2–3 pekan',
+        'Set stop loss di 5% bawah harga entry untuk antisipasi koreksi produksi',
+        'Monitor data produksi CPO Indonesia bulanan (rilis pertengahan April)',
+        'Watch: perkembangan EUDR untuk dampak permintaan Eropa jangka menengah'
+      ]
+    }
+  }
+
+};
+
+/* ─────────────────────────────────────────
+   MODAL ENGINE
+───────────────────────────────────────── */
+function openArticle(id) {
+  const art = ARTICLES[id];
+  if (!art) return;
+
+  const { card, detail } = art;
+
+  // Tags
+  const confClass = card.confidence === 'Tinggi' ? 'conf-high' : card.confidence === 'Sedang' ? 'conf-med' : 'conf-low';
+  document.getElementById('modalTagRow').innerHTML = `
+    <span class="modal-tag kategori">${card.kategori}</span>
+    <span class="modal-tag tier-tag">${card.tier}</span>
+    <span class="modal-tag ${confClass}">Confidence: ${card.confidence}</span>
+  `;
+
+  document.getElementById('modalHeadline').textContent = card.headline;
+  document.getElementById('modalDeck').textContent = card.deck;
+  document.getElementById('modalMeta').innerHTML = `
+    <span>${card.penulis}</span>
+    <span class="modal-meta-sep">·</span>
+    <span>${card.waktu}</span>
+  `;
+  document.getElementById('modalImg').innerHTML = `<span style="font-size:56px">${card.emoji}</span>`;
+
+  // Body paragraphs
+  document.getElementById('modalBodyText').innerHTML =
+    detail.body.map(p => `<p class="modal-para">${p}</p>`).join('');
+
+  // Facts
+  if (detail.fakta && detail.fakta.length) {
+    document.getElementById('modalFactsWrap').style.display = '';
+    document.getElementById('modalFacts').innerHTML = detail.fakta.map(f => `
+      <div class="modal-fact-card">
+        <div class="modal-fact-label">${f.label}</div>
+        <div class="modal-fact-value">${f.nilai}</div>
+      </div>
+    `).join('');
+  } else {
+    document.getElementById('modalFactsWrap').style.display = 'none';
+  }
+
+  // Analysis
+  document.getElementById('modalAnalysis').innerHTML =
+    `<div class="modal-analysis-label">Pembacaan Struktural IRIS</div>` +
+    detail.analisis.map(a => `<p class="modal-analysis-text">${a}</p>`).join('');
+
+  // Recommendations
+  if (detail.rekomendasi && detail.rekomendasi.length) {
+    document.getElementById('modalRekWrap').style.display = '';
+    document.getElementById('modalRek').innerHTML =
+      `<div class="modal-rek-title">Rekomendasi Aksi</div>` +
+      detail.rekomendasi.map((r, i) => `
+        <div class="modal-rek-item">
+          <div class="modal-rek-bullet">${i + 1}</div>
+          <div>${r}</div>
+        </div>
+      `).join('');
+  } else {
+    document.getElementById('modalRekWrap').style.display = 'none';
+  }
+
+  document.getElementById('articleModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('articleModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('articleModal')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Lead article click
+document.querySelector('.lead-article').addEventListener('click', () => openArticle('lead'));
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const el = document.getElementById('clock');
+  if (el) el.textContent = h + ':' + m + ' WIB';
+}
+updateClock();
+setInterval(updateClock, 60000);
+
+function setTab(el, tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>
